@@ -6,6 +6,7 @@ const UserReserveSchema = new Schema(
     {
         name:{type:String,required:true},
         BookedDates:[{type:  [Date]}],
+        totalPrice:{type:Number,required:true},
         hotelid:{type:mongoose.Types.ObjectId,ref:"HotelModal",required:true},
         roomid:{type:String,required:true},
         roomno:{type:String,required:true},

@@ -48,6 +48,7 @@ export const updateRoomAvailability = async (req, res, next) => {
       BookedDates: req.body.dates,
       roomid: req.params.id,
       hotelid: req.body.hotelid,
+      totalPrice:req.body.totalPrice,
       user:req.body.user,
       name:req.body.name,
       roomno:req.body.roomno
