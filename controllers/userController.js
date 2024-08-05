@@ -1,7 +1,7 @@
 import HotelsModal from "../modals/HotelsModal.js";
 import UserModel from "../modals/UserModal.js"
 import UserReservesModal from "../modals/UserReservesModal.js";
-import { getCurrentMonthYear, getCurrentYear, getStartAndEndOfWeek } from "../utils/dateFunc.js";
+import { formatDateToYearMonth, formatDateToYearMonthDay, getCurrentMonthYear, getCurrentYear, getStartAndEndOfWeek } from "../utils/dateFunc.js";
 
 
 // update user

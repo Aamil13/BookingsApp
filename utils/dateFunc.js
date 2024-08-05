@@ -18,7 +18,7 @@ export const getCurrentMonthYear = () => {
     };
   };
   
-  const formatDateToYearMonthDay = (date) => {
+  export const formatDateToYearMonthDay = (date) => {
     const d = new Date(date);
     return d.toISOString().split('T')[0]; // Returns date in 'YYYY-MM-DD' format
   };
