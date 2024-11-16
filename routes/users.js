@@ -15,8 +15,10 @@ const userRouter = Router()
 userRouter.put("/update/:id",verifyUser,UpdateUser)
 userRouter.delete("/delete/:id",verifyUser,DeleteUser)
 userRouter.get("/getuser/:id",verifyUser,getSingleUSer)
+// userRouter.get("/getallusers",getAllUser)
 userRouter.get("/getallusers",verifyAdmin,getAllUser)
 userRouter.get("/usertransaction/:id",verifyUser,getUserTransaction)
 userRouter.get("/admin",verifyAdmin,getDashBoardData)
+// userRouter.get("/admin",getDashBoardData)
 
 export default userRouter

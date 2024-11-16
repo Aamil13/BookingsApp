@@ -112,8 +112,14 @@ export const getRoom = async (req, res, next) => {
 };
 export const getRooms = async (req, res, next) => {
   try {
-    const rooms = await Room.find();
-    res.status(200).json(rooms);
+    const {limit,page} = req.query
+    const Currpage = Number(page) || 1
+        const limitpage = limit;
+        const startIndex = (Currpage - 1)*limit;
+        
+    const rooms = await Room.find().populate("hotelId").skip(startIndex).limit(limitpage)
+    const count = await Room.countDocuments()
+    res.status(200).json({rooms,count});
   } catch (err) {
     next(err);
   }

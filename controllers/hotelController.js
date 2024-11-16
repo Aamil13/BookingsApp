@@ -1,13 +1,23 @@
 import HotelsModal from "../modals/HotelsModal.js";
 import RoomsModal from "../modals/RoomsModal.js"
+import { deleteCloudinaryImage } from "../utils/cloudinaryImageUpload.js";
 import { createError } from "../utils/error.js";
 
 
 // create Hotel
 export const createHotel =async(req,res,next)=>{
-        let newHotel = new HotelsModal(req.body)
+        const {photos,files,publicIds,...hotel} = req.body
+        const newHotelData={
+            ...hotel,photos:files,photoPublicIds: publicIds
+        }
+    
+        let newHotel = new HotelsModal(newHotelData)
 
         try {
+            
+
+            // return    console.log("body",newHotelData);
+    
             const savedHotel = await newHotel.save()
             return res.status(201).json(savedHotel)
 
@@ -17,22 +27,35 @@ export const createHotel =async(req,res,next)=>{
 } 
 
 
-// update hotel
-export const updateHotel =async(req,res,next)=>{
-    const id = req.params.id
-    let updatedHotel
+// Update Hotel
+export const updateHotel = async (req, res, next) => {
+    const id = req.params.id;
+    const { photos, files, publicIds, ...hotel } = req.body;
+  
     try {
-       updatedHotel = await HotelsModal.findByIdAndUpdate(id,{$set: req.body},{
-        new: true
-       })
-        
-
+      // Find the existing hotel
+      const existingHotel = await HotelsModal.findById(id);
+      if (!existingHotel) {
+        return res.status(404).json({ message: 'Hotel not found' });
+      }
+  
+      // Merge existing photos and publicIds with new ones
+      const updatedPhotos = [...existingHotel.photos, ...(files || [])];
+      const updatedPublicIds = [...existingHotel.photoPublicIds, ...(publicIds || [])];
+  
+      const newHotelData = {
+        ...hotel,
+        photos: updatedPhotos,
+        photoPublicIds: updatedPublicIds
+      };
+  
+      const updatedHotel = await HotelsModal.findByIdAndUpdate(id, { $set: newHotelData }, { new: true });
+  
+      return res.status(200).json(updatedHotel);
     } catch (error) {
-        return next(error)
+      return next(error);
     }
-
-    return res.status(200).json(updatedHotel)
-} 
+  };
 
 
 // delete Hotel
@@ -49,6 +72,34 @@ export const deleteHotel =async(req,res,next)=>{
 
     return res.status(200).json({message:"Hotel has been deleted!"})
 } 
+
+export const deleteHotelPhoto = async (req, res, next) => {
+    const { hotelId, publicId,imageUrl } = req.body;
+
+    
+    try {
+
+      const hotel = await HotelsModal.findById(hotelId);
+      if (!hotel) {
+        return res.status(404).json({ message: 'Hotel not found' });
+      }
+
+      if (!hotel.photoPublicIds.includes(publicId)) {
+        return res.status(400).json({ message: 'Image not found in hotel record' });
+      }
+      await deleteCloudinaryImage(publicId);
+  
+
+      hotel.photos = hotel.photos.filter(photoUrl => photoUrl !== imageUrl);
+
+      hotel.photoPublicIds = hotel.photoPublicIds.filter(id => id !== publicId);
+      await hotel.save();
+  
+      res.status(200).json({ message: 'Image deleted successfully', hotel });
+    } catch (error) {
+      next(error);
+    }
+  };
 
 
 
@@ -139,15 +190,35 @@ export const getHotelType =async(req,res,next)=>{
 
 
 export const getHotelRooms = async(req,res,next)=>{
+
+    
     try {
         const hotel = await HotelsModal.findById(req.params.id);
+        
         const list = await Promise.all(
             hotel.rooms.map((room)=>{
+                if(!room) return
                 return RoomsModal.findById(room)
             })
         )
 
         return res.status(200).json(list)
+    } catch (error) {
+        next(error)
+    }
+}
+
+
+export const searchHotelByName = async(req,res,next)=>{
+    const {search} = req.query
+    
+    try {
+        const hotels = await HotelsModal.find({
+            name: { $regex: search, $options: 'i' } // 'i' for case-insensitive search
+        }).select("name _id")
+    
+        res.status(200).json(hotels);
+    
     } catch (error) {
         next(error)
     }

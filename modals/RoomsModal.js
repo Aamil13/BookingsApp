@@ -1,4 +1,4 @@
-import { Schema,model } from "mongoose";
+import mongoose, { Schema,model } from "mongoose";
 
 const roomSchema = new Schema(
     {
@@ -17,6 +17,11 @@ const roomSchema = new Schema(
         desc: {
           type: String,
           required: true,
+        },
+
+        hotelId:{
+          type: mongoose.Schema.Types.ObjectId, ref: 'HotelModal', required: true
+        
         },
         roomNumbers: [{ number: Number, unavailableDates: {type: [Date]}}],
       },

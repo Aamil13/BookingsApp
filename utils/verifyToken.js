@@ -34,9 +34,12 @@ export const verifyUser = (req,res,next)=>{
 }
 
 export const verifyAdmin = (req,res,next)=>{
-    verifyToken(req,res,next, ()=>{
+    
+    verifyToken(req,res, ()=>{
+        // console.log("req",req.user);
+        
         if(req.user.isAdmin){
-            // console.log("verr");
+            // console.log("verr",req.user);
             next()
         }else{
             return next(createError(403,"You are not Admin"));

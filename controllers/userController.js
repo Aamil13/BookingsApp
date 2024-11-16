@@ -50,14 +50,18 @@ export const getSingleUSer =async(req,res,next)=>{
 
 export const getAllUser =async(req,res,next)=>{
     let users
+    let totalCount
+    const page = req.query.page || 1;
+    const pageSize = req.query.limit || 10;
+        const skip = (page - 1) * pageSize;
     try {
-        users = await UserModel.find()
-        
+        users = await UserModel.find().skip(skip).limit(pageSize)
+        totalCount = await UserModel.countDocuments();
     } catch (error) {
         return next(error)
     }
 
-    return res.status(200).json(users)
+    return res.status(200).json({users,totalCount})
 } 
 
 export const getUserTransaction = async(req,res,next)=>{
@@ -126,48 +130,63 @@ export const getDashBoardData=async(req,res,next)=>{
           const dailyIncome = allBookings.reduce((acc, booking) => {
             const bookingDate = new Date(booking.createdAt);
             const formattedDate = formatDateToYearMonthDay(bookingDate);
-            
+          
             if (formattedDate >= startOfWeek && formattedDate <= endOfWeek) {
-              const dayOfWeek = getDayOfWeekName(formattedDate);
-              if (!acc[dayOfWeek]) {
-                acc[dayOfWeek] = [];
+              const dayOfWeek = getDayOfWeekName(bookingDate);
+              const dayOfMonth = bookingDate.getDate();
+              const dayKey = `${dayOfWeek}, ${dayOfMonth}`;
+          
+              if (!acc[dayKey]) {
+                acc[dayKey] = 0;
               }
-              acc[dayOfWeek].push(booking.totalPrice || 0);
+              acc[dayKey] += booking.totalPrice || 0;
             }
-            
+          
             return acc;
           }, {});
           
-          const minDailyIncome = Object.keys(dailyIncome).reduce((acc, day) => {
-            acc[day] = Math.min(...dailyIncome[day]);
-            return acc;
-          }, {});
-
+          // Generate array format with all days of the week
+          const allDaysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thurs', 'Fri', 'Sat'];
+          
+          const dailyIncomeArray = allDaysOfWeek.map((day, index) => {
+            const currentDay = new Date(startOfWeek);
+            currentDay.setDate(currentDay.getDate() + index); // Move through the week from startOfWeek
+          
+            const dayOfMonth = currentDay.getDate();
+            const dayKey = `${day}, ${dayOfMonth}`;
+            
+            return {
+              date: dayKey,
+              total: dailyIncome[dayKey] || 0
+            };
+          });
           // for monthly
           const currentYearMonthly = getCurrentYear();
 
-const monthlyIncome = allBookings.reduce((acc, booking) => {
-  const { year, month } = formatDateToYearMonth(booking.createdAt);
+          const monthlyIncome = allBookings.reduce((acc, booking) => {
+            const { year, month } = formatDateToYearMonth(booking.createdAt);
+          
+            if (parseInt(year) === currentYearMonthly) {
+              if (!acc[month]) {
+                acc[month] = 0;
+              }
+              acc[month] += (booking.totalPrice || 0);
+            }
+          
+            return acc;
+          }, {});
+          
+          const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+          
+          const totalMonthlyIncomeForYear = monthNames.map((month, index) => {
+            const monthIndex = (index + 1).toString().padStart(2, '0'); // Convert index to month number string (01, 02, ..., 12)
+            return {
+              month: month,
+              total: monthlyIncome[monthIndex] || 0
+            };
+          });
 
-  if (parseInt(year) === currentYearMonthly) {
-    if (!acc[month]) {
-      acc[month] = 0;
-    }
-    acc[month] += (booking.totalPrice || 0);
-  }
-
-  return acc;
-}, {});
-
-const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-const totalMonthlyIncomeForYear = monthNames.reduce((acc, month, index) => {
-  const monthIndex = (index + 1).toString().padStart(2, '0'); // Convert index to month number string (01, 02, ..., 12)
-  acc[month] = monthlyIncome[monthIndex] || 0;
-  return acc;
-}, {});
-
-          return res.status(200).json({totalUsers,totalIncome,totalMonthlyIncome,minDailyIncome,totalMonthlyIncomeForYear})
+          return res.status(200).json({totalUsers,totalIncome,totalMonthlyIncome,dailyIncomeArray,totalMonthlyIncomeForYear})
         
     } catch (error) {
         return next(error)

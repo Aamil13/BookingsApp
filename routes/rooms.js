@@ -4,13 +4,16 @@ import { createRoom, deleteRoom, getRoom, getRooms, updateRoom, updateRoomAvaila
 
 const roomRouter  = Router()
 
-roomRouter.post("/:hotelid", verifyAdmin, createRoom);
+// roomRouter.post("/:hotelid", verifyAdmin, createRoom);
+roomRouter.post("/:hotelid",verifyAdmin,  createRoom);
 
 //UPDATE
 roomRouter.put("/availability/:id", updateRoomAvailability);
+// roomRouter.put("/:id", updateRoom);
 roomRouter.put("/:id", verifyAdmin, updateRoom);
 //DELETE
 roomRouter.delete("/:id/:hotelid", verifyAdmin, deleteRoom);
+// roomRouter.delete("/:id/:hotelid", deleteRoom);
 //GET
 
 roomRouter.get("/:id", getRoom);
