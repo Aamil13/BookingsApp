@@ -7,23 +7,23 @@ import userRouter from "./routes/users.js"
 import cookieParser from "cookie-parser"
 import roomRouter from "./routes/rooms.js"
 import reservationRouter from "./routes/reservation.js"
-import cors from"cors"
+// import cors from"cors"
 
 const app = express()
 
 dotenv.config()
 
-const allowedOrigin = 'https://nextbookingadmin.netlify.app';
+// const allowedOrigin = 'https://nextbookingadmin.netlify.app';
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (origin === allowedOrigin || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  }
-}));
+// app.use(cors({
+//   origin: (origin, callback) => {
+//     if (origin === allowedOrigin || !origin) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   }
+// }));
 
 app.get("/",(req,res)=>{
     return res.send("working")
