@@ -7,23 +7,23 @@ import userRouter from "./routes/users.js"
 import cookieParser from "cookie-parser"
 import roomRouter from "./routes/rooms.js"
 import reservationRouter from "./routes/reservation.js"
-// import cors from"cors"
+import cors from"cors"
 
 const app = express()
 
 dotenv.config()
 
-// const allowedOrigin = 'https://nextbookingadmin.netlify.app';
+const allowedOrigin = 'https://nextbookingadmin.netlify.app';
 
-// app.use(cors({
-//   origin: (origin, callback) => {
-//     if (origin === allowedOrigin || !origin) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   }
-// }));
+app.use(cors({
+  origin: (origin, callback) => {
+    if (origin === allowedOrigin || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
 
 app.get("/",(req,res)=>{
     return res.send("working")
@@ -37,15 +37,15 @@ connctDB()
 app.use(express.json())
 app.use(cookieParser())
 
-import cloudinary from 'cloudinary';
+// import cloudinary from 'cloudinary';
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+// cloudinary.config({
+//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+//   api_key: process.env.CLOUDINARY_API_KEY,
+//   api_secret: process.env.CLOUDINARY_API_SECRET,
+// });
 
-export  {cloudinary};
+// export  {cloudinary};
 
 app.use("/api/v1/hotel",hotelRoutes)
 app.use("/api/v1/auth",authRouter)
@@ -66,6 +66,8 @@ app.use((err,req,res,next)=>{
 })
 
 
-app.listen(5000,()=>{
-    console.log("conneted");
-})
+// app.listen(5000,()=>{
+//     console.log("conneted");
+// })
+
+export default app;

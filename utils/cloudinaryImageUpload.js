@@ -1,5 +1,5 @@
-// import cloudinary from './cloudinary.js';
-import {cloudinary} from '../index.js';
+import cloudinary from './cloudinary.js';
+// import {cloudinary} from '../index.js';
 import fs from 'fs';
 
 
