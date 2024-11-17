@@ -67,8 +67,8 @@ app.use((err,req,res,next)=>{
 })
 
 
-app.listen(5000,()=>{
-    console.log("conneted");
-})
+// app.listen(5000,()=>{
+//     console.log("conneted");
+// })
 
-// export default app;
+export default app;
