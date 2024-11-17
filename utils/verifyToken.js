@@ -3,15 +3,18 @@ import { createError } from "./error.js";
 
 
 export const verifyToken = (req,res,next)=>{
-    const token = req.cookies.access_token;
-        // console.log("tokenenter",token);
+    // const token = req.cookies.access_token;
+    const token = req.headers.authorization?.split(' ')[1];
+
     if(!token){
-        // console.log("no token");
         return res.send(createError(401,"You are not authenticated"))
     } 
         
     jwt.verify(token,process.env.JWT_SECRET,(err,user)=>{
-        if(err) return res.send(createError(403,"Token is not valid"));
+        if(err){
+            // console.error("JWT verification error:", err);
+            return res.send(createError(403,"Token is not valid"));
+        } 
 
         req.user = user;
         // console.log("res",req.user);

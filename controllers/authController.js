@@ -35,8 +35,11 @@ export const login =async(req,res,next)=>{
         const token = jwt.sign({id: user._id, isAdmin: user.isAdmin}, process.env.JWT_SECRET)
 
         const {password , isAdmin, ...otherDetails} = user._doc
+        const expirationDate = new Date();
+        expirationDate.setDate(expirationDate.getDate() + 7);
+        const tokenWithExpireDate = {accessToken:token,expires:expirationDate}
         if(isAdmin){
-            res.cookie("access_token",token,{httpOnly: false}).status(200).json({otherDetails})
+            res.status(200).json({otherDetails,tokenWithExpireDate})
         }else{
             res.cookie("access_token",token,{httpOnly: true,}).status(200).json({otherDetails})
         }

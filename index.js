@@ -13,17 +13,18 @@ const app = express()
 
 dotenv.config()
 
-const allowedOrigin = 'https://nextbookingadmin.netlify.app';
+// const allowedOrigin = 'https://nextbookingadmin.netlify.app';
+const allowedOrigins = ['https://nextbookingadmin.netlify.app', 'http://localhost:5173'];
 
 app.use(cors({
-  origin: (origin, callback) => {
-    if (origin === allowedOrigin || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
     }
-  }
-}));
+  }));
 
 app.get("/",(req,res)=>{
     return res.send("working")
@@ -66,8 +67,8 @@ app.use((err,req,res,next)=>{
 })
 
 
-// app.listen(5000,()=>{
-//     console.log("conneted");
-// })
+app.listen(5000,()=>{
+    console.log("conneted");
+})
 
-export default app;
+// export default app;
