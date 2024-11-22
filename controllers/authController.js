@@ -38,11 +38,9 @@ export const login =async(req,res,next)=>{
         const expirationDate = new Date();
         expirationDate.setDate(expirationDate.getDate() + 7);
         const tokenWithExpireDate = {accessToken:token,expires:expirationDate}
-        if(isAdmin){
+
             res.status(200).json({otherDetails,tokenWithExpireDate})
-        }else{
-            res.cookie("access_token",token,{httpOnly: true,}).status(200).json({otherDetails})
-        }
+   
         
     } catch (error) {
         return next(error)

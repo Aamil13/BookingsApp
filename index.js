@@ -14,7 +14,7 @@ const app = express()
 dotenv.config()
 
 // const allowedOrigin = 'https://nextbookingadmin.netlify.app';
-const allowedOrigins = ['https://nextbookingadmin.netlify.app', 'http://localhost:5173',"https://nextbookingappmern.vercel.app"];
+const allowedOrigins = ['https://nextbookingadmin.netlify.app', 'http://localhost:5173',"https://nextbookingappmern.vercel.app","http://localhost:3000"];
 
 app.use(cors({
     origin: (origin, callback) => {

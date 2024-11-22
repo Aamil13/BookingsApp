@@ -191,12 +191,13 @@ export const getHotelType =async(req,res,next)=>{
 
 export const getHotelRooms = async(req,res,next)=>{
 
-    
+    // console.log("rrr",req.params.id);
     try {
         const hotel = await HotelsModal.findById(req.params.id);
-        
+        // console.log("hotel",hotel);
         const list = await Promise.all(
             hotel.rooms.map((room)=>{
+                
                 if(!room) return
                 return RoomsModal.findById(room)
             })
